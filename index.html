@@ -1,0 +1,172 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+    <title>Startbootstrap-landing-page by ironsummitmedia</title>
+
+    <link rel="stylesheet" href="stylesheets/styles.css">
+    <link rel="stylesheet" href="stylesheets/github-light.css">
+    <script src="javascripts/scale.fix.js"></script>
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+    <!--[if lt IE 9]>
+    <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+  </head>
+  <body>
+    <div class="wrapper">
+      <header>
+        <h1 class="header">Startbootstrap-landing-page</h1>
+        <p class="header"></p>
+
+        
+
+        <p class="header">This project is maintained by <a class="header name" href="https://github.com/ironsummitmedia">ironsummitmedia</a></p>
+
+
+      </header>
+      <section>
+        <h3>
+<a id="welcome-to-github-pages" class="anchor" href="#welcome-to-github-pages" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Welcome to GitHub Pages.</h3>
+
+<strong>4.1</strong> <strong>Tools for Use in Restoring and Relocating Post.Office</strong>
+
+<em><strong>2.0 and 3.0 Only - NT Only - How do I use the Post.Office permission setting tool </strong><strong>(poperms)?</strong></em>
+
+Poperms is a utility we developed which allows you to modify NT permissions in order to facilitate the backing up, restoring, and relocating of Post.Office. You will find the poperms tool referenced in multiple instruction sets. Each time the tool is referenced the proper parameters will be specified.
+
+The program runs from the command line using the following syntax:
+
+POPERMS [-r] [-p] [-o] [-l] [-m] [-f] [-a] [-everyone] [-u | user_name]
+
+Where:
+
+-r = Set registry permissions
+
+-p = Set Post.Office Program directory permissions
+
+-o = Set Post.Office Spool directory permissions
+
+-l = Set Post.Office Log directory permissions
+
+-m = Set Post.Office Mailbox directory permissions
+
+-f = Set all Post.Office File system directory permissions
+
+-a = Set ALL Post.Office File AND Registry permissions
+
+-everyone = give full permissions to the group Everyone in addition to the user specified
+
+-u = use the post.office user that the service logs in as
+
+user_name = name of user to give permissions to
+
+To execute a command successfully you must supply at least one parameter from the first group, and <em>only</em> one from the second group. The program will then set the requested files and registry entries to Full Control for the user specified (and <em>additionally</em> allow
+Full Control to the group Everyone if that option is selected).
+
+Note: You must be an ADMINISTRATOR to run this program, and the utility must be placed in the Post.Office executables directory!
+
+If you are running 3.0, the poperms utility is located in your executable directory.
+
+If you are running 2.0, you can obtain a copy of the poperms software by doing the following:
+<ul>
+ 	<li>From the DOS prompt, change to the directory containing the Post.Office executables directory. For example, if your Post.Office executables directory is \win32app\post.office, please cd to \win32app\post.office.</li>
+ 	<li>Type: ftp ftp.software.com</li>
+ 	<li>Log in as anonymous using your e-mail address as the password.</li>
+ 	<li>Change directory to the location of the appropriate package by typing
+cd ftp\postoffice\archive\po20\nt\&lt;yourplatform&gt;\utilities</li>
+ 	<li>Download the executables in binary mode by typing:
+bin
+get poperms.exe</li>
+</ul>
+<strong>4.2</strong> <strong>Backing up Post.Office</strong>
+
+<em><strong>2.0 and 3.0 Only - NT Only - How do I do a standard, full system backup of </strong><strong>Post.Office?</strong></em>
+
+Safe software practices dictate that you back up your mail server on a regular basis. Follow the steps outlined below to back up the current version of Post.Office.
+
+Note: Instructions on restoring your system from the backup files are provided in the Restoring Post.Office section of the FAQ, which follows.
+<ol>
+ 	<li>Make sure that you are logged in as the Local Administrator of your host. Logging in as the Domain Administrator is not sufficient unless the machine you are using is a Primary Domain Controller.</li>
+ 	<li>Stop Post.Office using Control Panel -&gt; Services -&gt; Post.Office MTA -&gt; Stop or from the command line "net stop post.office"</li>
+ 	<li>Open the permissions to "everyone" using poperms
+-a -Everyone -u</li>
+ 	<li>Back up the required Registry information by running the Registry Editor, (REGEDT32.EXE), locating the following keys, and saving each one independently by selecting the desired key, pulling down the Registry menu, and then choosing the Save Key command.
+- HKEY_LOCAL_MACHINE\SOFTWARE\Software.com\Post.Office
+(suggested name &amp; location: <em>anotherhost</em>\temp\Post.OfficeRegKey<em>version#</em>)
+-HKEY_LOCAL_MACHINE\SOFTWARE\Software.com\Post.Office\MTA-Accounts
+(suggested name &amp; location: <em>anotherhost</em>\temp\MTA-AccountsRegKey<em>version#</em>)</li>
+ 	<li>Back up the required file system information.
+- The Post.Office Spooling Directory containing "account" and configuration information (suggested name &amp; location: anotherhost\temp\Post.Officeversion#config)
+- the Program Directory containing Post.Office executables
+(suggested name &amp; location: anotherhost\temp\Post.Officeversion#execs)
+- the Mailbox Directory containing your mailbox information
+(suggested name &amp; location: anotherhost\temp\Post.Officeversion#mailbox)
+<em>The exact location of the required directories can be found via the Program </em><em>Manager by double clicking on the Main\Control Panel\Post.Office icons in the order </em><em>indicated. When the Post.Office applet window appears look at the entries at the bottom </em><em>of the window. Or, if you are running 3.0, in the Licensing and Configuration Web Page.</em></li>
+ 	<li>Close the permissions back to the installation defaults by using poperms:
+poperms -a -u</li>
+ 	<li>Start Post.Office using Control Panel -&gt; Services -&gt; Post.Office MTA -&gt; Start or from the command line "net start post.office"</li>
+</ol>
+<em><strong>1.9.3 Only - NT Only - How do I do a standard, full system backup of Post.Office?</strong></em>
+
+Safe software practices dictate that you back up your mail server on a regular basis. Follow the steps outlined below to back up the current version of Post.Office.
+
+<em>Note: Instructions on restoring your system from the backup files are provided in the </em><em>Restoring Post.Office section of the FAQ, which follows.</em>
+<ol>
+ 	<li>Stop Post.Office using Control Panel -&gt; Services -&gt; Post.Office MTA -&gt; Stop or from the command line "net stop post.office"</li>
+ 	<li>Back up the required Registry information by running the Registry Editor, (REGEDT32.EXE), locating the following keys, and saving each one independently by selecting the desired key, pulling down the Registry menu, and then choosing the Save Key command.
+- HKEY_LOCAL_MACHINE\SOFTWARE\Software.com\Post.Office
+(suggested name &amp; location: <em>anotherhost</em>\temp\Post.OfficeRegKey<em>version#</em>)
+-HKEY_LOCAL_MACHINE\SOFTWARE\Software.com\Post.Office\MTA-Accounts
+(suggested name &amp; location: <em>anotherhost</em>\temp\MTA-AccountsRegKey<em>version#</em>)</li>
+ 	<li>Back up the required file system information.
+- The Post.Office Spooling Directory containing "account" and configuration information (suggested name &amp; location: <em>notherhost</em>\temp\Post.Office<em>version#</em>config)
+- the Program Directory containing Post.Office executables
+(suggested name &amp; location: <em>anotherhost</em>\temp\Post.Office<em>version#</em>execs)
+- the Mailbox Directory containing your mailbox information
+(suggested name &amp; location: <em>anotherhost</em>\temp\Post.Office<em>version#</em>mailbox)
+<em>The exact location of the required directories can be found via the Program </em><em>Manager by double clicking on the Main\Control Panel\Post.Office icons in the order </em><em>indicated. When the Post.Office applet window appears look at the entries at the bottom </em><em>of the window. Or, if you are running 3.0, in the Licensing and Configuration Web Page.</em></li>
+ 	<li>Start Post.Office using Control Panel -&gt; Services -&gt; Post.Office MTA -&gt; Start or from the command line "net start post.office"</li>
+</ol>
+<em><strong>All Versions - UNIX Only - How do I do a standard, full system backup of Post.Office?</strong></em>
+
+Safe software practices dictate that you back up your mail server on a regular basis. Follow the steps outlined below to back up the current version of Post.Office.
+
+Note: Instructions on restoring your system from the backup files are provided in the Restoring Post.Office section of the FAQ, which follows.
+
+<strong>Solaris Backup Instructions</strong><strong>:</strong>
+
+These instructions presume that you have installed Post.Office in the default locations which are /opt/post.office (program executables) and /var/spool/post.office (the spooling directories). If you selected other locations you will need to adjust the instructions accordingly. To determine the current locations of your Post.Office Spooling, Program, and Mailbox directories list the contents of the /etc/post.office.conf file.
+<ol>
+ 	<li>Log on as root.</li>
+ 	<li>Shutdown Post.Office by typing: /opt/post.office/post.office shutdown</li>
+ 	<li>Back up the following items making sure to maintain permissions and links:</li>
+</ol>
+<ul>
+ 	<li>/var/spool/post.office (the "account" and configuration information)</li>
+ 	<li>/var/spool/mailbox (the mailbox information)</li>
+ 	<li>/etc/post.office.conf (your configuration file)</li>
+</ul>
+<strong>Backup Instructions for All Other UNIX Platforms</strong>
+
+These instructions presume that you installed Post.Office in the default locations which are /usr/local/post.office (program executables) and /var/spool/post.office (the spooling directories). If you selected other locations you will need to adjust the instructions accordingly. To determine the current locations of your Post.Office Spooling, Program, and Mailbox directories list the contents of the /etc/post.office.conf file.
+<ol>
+ 	<li>Log on as root.</li>
+ 	<li>Shutdown Post.Office by typing:
+/usr/local/post.office/post.office shutdown</li>
+ 	<li>Back up the following items making sure to maintain permissions and links:</li>
+</ol>
+<ul>
+ 	<li>/usr/local/post.office (the Post.Office executables)</li>
+ 	<li>/var/spool/post.office (the "account" and configuration information)</li>
+ 	<li>/var/spool/mailbox (the mailbox information)</li>
+ 	<li>/etc/post.office.conf (your configuration file)</li>
+</ul></section>
+      <footer>
+      
+      </footer>
+    </div>
+    <!--[if !IE]><script>fixScale(document);</script><![endif]-->
+		
+  </body>
+</html>

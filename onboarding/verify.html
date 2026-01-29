@@ -1,0 +1,347 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Account Verificatie</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="container">
+    <div class="card">
+      <div class="header">
+        <h1>Account Activeren</h1>
+        <div class="steps">
+          <div class="step active" data-step="1">
+            <span class="step-number">1</span>
+            <span class="step-label">Identiteit</span>
+          </div>
+          <div class="step-line"></div>
+          <div class="step" data-step="2">
+            <span class="step-number">2</span>
+            <span class="step-label">SMS Code</span>
+          </div>
+          <div class="step-line"></div>
+          <div class="step" data-step="3">
+            <span class="step-number">3</span>
+            <span class="step-label">Wachtwoord</span>
+          </div>
+          <div class="step-line"></div>
+          <div class="step" data-step="4">
+            <span class="step-number">4</span>
+            <span class="step-label">MFA Setup</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Step 1: Identity Verification -->
+      <div id="step1" class="step-content active">
+        <h2>Stap 1: Verifieer je identiteit</h2>
+        <p>Vul je geboortedatum en mobiel nummer in ter verificatie.</p>
+
+        <form id="identityForm">
+          <div class="form-group">
+            <label for="birthDate">Geboortedatum</label>
+            <input type="date" id="birthDate" required>
+          </div>
+          <div class="form-group">
+            <label for="mobilePhone">Mobiel nummer (06)</label>
+            <input type="tel" id="mobilePhone" required placeholder="06 12345678">
+          </div>
+          <button type="submit" class="btn btn-primary">
+            <span class="btn-text">Verifiëren</span>
+            <span class="btn-loading" style="display:none;">Bezig met controleren...</span>
+          </button>
+        </form>
+        <div id="step1Error" class="error-message" style="display:none;"></div>
+      </div>
+
+      <!-- Step 2: OTP Verification -->
+      <div id="step2" class="step-content">
+        <h2>Stap 2: Voer de SMS-code in</h2>
+        <p>Er is een 6-cijferige code verstuurd naar je mobiel. Voer deze hieronder in.</p>
+
+        <form id="otpForm">
+          <div class="form-group">
+            <label for="otpCode">Verificatiecode</label>
+            <div class="otp-input-group">
+              <input type="text" id="otpCode" required maxlength="6" pattern="\d{6}"
+                     placeholder="000000" inputmode="numeric" autocomplete="one-time-code">
+            </div>
+            <small>De code is 10 minuten geldig</small>
+          </div>
+          <button type="submit" class="btn btn-primary">
+            <span class="btn-text">Code Verifiëren</span>
+            <span class="btn-loading" style="display:none;">Bezig met controleren...</span>
+          </button>
+        </form>
+        <div id="step2Error" class="error-message" style="display:none;"></div>
+      </div>
+
+      <!-- Step 3: Set Password -->
+      <div id="step3" class="step-content">
+        <h2>Stap 3: Kies een wachtwoord</h2>
+        <p>Stel een sterk wachtwoord in voor je account.</p>
+
+        <form id="passwordForm">
+          <div class="form-group">
+            <label for="password">Nieuw wachtwoord</label>
+            <div class="password-input">
+              <input type="password" id="password" required minlength="12">
+              <button type="button" class="toggle-password" aria-label="Toon wachtwoord">
+                <svg class="eye-icon" viewBox="0 0 24 24" width="20" height="20">
+                  <path d="M12 4.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5c-1.73-4.39-6-7.5-11-7.5zM12 17c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5zm0-8c-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3-1.34-3-3-3z" fill="currentColor"/>
+                </svg>
+              </button>
+            </div>
+            <div class="password-requirements" id="passwordReqs">
+              <div class="req" data-req="length">Minimaal 12 tekens</div>
+              <div class="req" data-req="upper">Minimaal 1 hoofdletter</div>
+              <div class="req" data-req="lower">Minimaal 1 kleine letter</div>
+              <div class="req" data-req="number">Minimaal 1 cijfer</div>
+              <div class="req" data-req="special">Minimaal 1 speciaal teken</div>
+            </div>
+          </div>
+          <div class="form-group">
+            <label for="confirmPassword">Bevestig wachtwoord</label>
+            <input type="password" id="confirmPassword" required>
+          </div>
+          <button type="submit" class="btn btn-primary" id="setPasswordBtn" disabled>
+            <span class="btn-text">Wachtwoord Instellen</span>
+            <span class="btn-loading" style="display:none;">Bezig met instellen...</span>
+          </button>
+        </form>
+        <div id="step3Error" class="error-message" style="display:none;"></div>
+      </div>
+
+      <!-- Step 4: MFA Setup Redirect -->
+      <div id="step4" class="step-content">
+        <h2>Account Geactiveerd!</h2>
+        <div class="success-icon">&#10003;</div>
+        <p>Je account is succesvol geactiveerd. De laatste stap is het instellen van Multi-Factor Authenticatie (MFA).</p>
+        <p>Je wordt automatisch doorgeleid naar de MFA-instellingen van Microsoft Office.</p>
+        <p id="upnDisplay" class="upn-display"></p>
+        <div class="countdown" id="countdown">Doorsturen over <span id="countdownTimer">5</span> seconden...</div>
+        <a href="https://mysignins.microsoft.com/security-info" class="btn btn-primary" id="mfaLink">
+          Nu MFA Instellen
+        </a>
+      </div>
+
+      <!-- Error state: invalid/expired link -->
+      <div id="errorState" class="step-content">
+        <h2>Ongeldige Link</h2>
+        <div class="error-icon">&#10007;</div>
+        <p id="errorStateMessage">Deze verificatielink is ongeldig of verlopen. Neem contact op met IT-support.</p>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const API_BASE = window.APP_CONFIG?.API_BASE || '/api';
+
+    // State
+    let state = {
+      token: null,
+      userId: null,
+      currentStep: 1,
+    };
+
+    // Parse token from URL
+    const urlParams = new URLSearchParams(window.location.search);
+    state.token = urlParams.get('token');
+
+    if (!state.token) {
+      showError('Geen verificatietoken gevonden. Controleer of je de juiste link hebt gebruikt.');
+    }
+
+    // Step navigation
+    function goToStep(stepNumber) {
+      document.querySelectorAll('.step-content').forEach(el => el.classList.remove('active'));
+      document.querySelectorAll('.steps .step').forEach(el => {
+        const s = parseInt(el.dataset.step);
+        el.classList.toggle('active', s === stepNumber);
+        el.classList.toggle('completed', s < stepNumber);
+      });
+      document.getElementById(`step${stepNumber}`).classList.add('active');
+      state.currentStep = stepNumber;
+    }
+
+    function showError(message) {
+      document.querySelectorAll('.step-content').forEach(el => el.classList.remove('active'));
+      document.getElementById('errorState').classList.add('active');
+      document.getElementById('errorStateMessage').textContent = message;
+    }
+
+    function showStepError(step, message) {
+      const el = document.getElementById(`step${step}Error`);
+      el.textContent = message;
+      el.style.display = 'block';
+    }
+
+    function hideStepError(step) {
+      document.getElementById(`step${step}Error`).style.display = 'none';
+    }
+
+    function setLoading(form, loading) {
+      const btn = form.querySelector('button[type="submit"]');
+      btn.disabled = loading;
+      btn.querySelector('.btn-text').style.display = loading ? 'none' : 'inline';
+      btn.querySelector('.btn-loading').style.display = loading ? 'inline' : 'none';
+    }
+
+    // Step 1: Identity verification
+    document.getElementById('identityForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      hideStepError(1);
+      setLoading(e.target, true);
+
+      try {
+        const response = await fetch(`${API_BASE}/verify/identity`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            token: state.token,
+            birthDate: document.getElementById('birthDate').value,
+            mobilePhone: document.getElementById('mobilePhone').value,
+          }),
+        });
+
+        const data = await response.json();
+
+        if (response.ok) {
+          state.userId = data.userId;
+          goToStep(2);
+        } else {
+          showStepError(1, data.error || 'Verificatie mislukt');
+        }
+      } catch {
+        showStepError(1, 'Kan geen verbinding maken met de server');
+      }
+
+      setLoading(e.target, false);
+    });
+
+    // Step 2: OTP verification
+    document.getElementById('otpForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      hideStepError(2);
+      setLoading(e.target, true);
+
+      try {
+        const response = await fetch(`${API_BASE}/verify/otp`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            userId: state.userId,
+            otpCode: document.getElementById('otpCode').value,
+          }),
+        });
+
+        const data = await response.json();
+
+        if (response.ok) {
+          state.token = data.token;
+          goToStep(3);
+        } else {
+          showStepError(2, data.error || 'Verificatie mislukt');
+        }
+      } catch {
+        showStepError(2, 'Kan geen verbinding maken met de server');
+      }
+
+      setLoading(e.target, false);
+    });
+
+    // Step 3: Password - real-time validation
+    const passwordInput = document.getElementById('password');
+    const confirmInput = document.getElementById('confirmPassword');
+    const setPasswordBtn = document.getElementById('setPasswordBtn');
+
+    function checkPasswordRequirements() {
+      const pw = passwordInput.value;
+      const reqs = {
+        length: pw.length >= 12,
+        upper: /[A-Z]/.test(pw),
+        lower: /[a-z]/.test(pw),
+        number: /[0-9]/.test(pw),
+        special: /[^A-Za-z0-9]/.test(pw),
+      };
+
+      Object.entries(reqs).forEach(([key, met]) => {
+        const el = document.querySelector(`[data-req="${key}"]`);
+        el.classList.toggle('met', met);
+        el.classList.toggle('unmet', !met && pw.length > 0);
+      });
+
+      const allMet = Object.values(reqs).every(Boolean);
+      const match = pw === confirmInput.value && confirmInput.value.length > 0;
+      setPasswordBtn.disabled = !(allMet && match);
+    }
+
+    passwordInput.addEventListener('input', checkPasswordRequirements);
+    confirmInput.addEventListener('input', checkPasswordRequirements);
+
+    // Toggle password visibility
+    document.querySelector('.toggle-password').addEventListener('click', () => {
+      const input = document.getElementById('password');
+      input.type = input.type === 'password' ? 'text' : 'password';
+    });
+
+    document.getElementById('passwordForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      hideStepError(3);
+
+      if (passwordInput.value !== confirmInput.value) {
+        showStepError(3, 'Wachtwoorden komen niet overeen');
+        return;
+      }
+
+      setLoading(e.target, true);
+
+      try {
+        const response = await fetch(`${API_BASE}/verify/set-password`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            userId: state.userId,
+            token: state.token,
+            password: passwordInput.value,
+          }),
+        });
+
+        const data = await response.json();
+
+        if (response.ok) {
+          document.getElementById('upnDisplay').textContent =
+            `Je gebruikersnaam: ${data.userPrincipalName}`;
+          goToStep(4);
+          startCountdown();
+        } else {
+          showStepError(3, data.error || 'Kon wachtwoord niet instellen');
+          if (data.details && Array.isArray(data.details)) {
+            showStepError(3, data.details.join(', '));
+          }
+        }
+      } catch {
+        showStepError(3, 'Kan geen verbinding maken met de server');
+      }
+
+      setLoading(e.target, false);
+    });
+
+    // Step 4: Countdown and redirect to MFA
+    function startCountdown() {
+      let seconds = 5;
+      const timer = document.getElementById('countdownTimer');
+      const interval = setInterval(() => {
+        seconds--;
+        timer.textContent = seconds;
+        if (seconds <= 0) {
+          clearInterval(interval);
+          window.location.href = 'https://mysignins.microsoft.com/security-info';
+        }
+      }, 1000);
+    }
+  </script>
+</body>
+</html>

@@ -9,6 +9,8 @@
     "COMMUNICATION_CONNECTION_STRING": "<your-azure-communication-services-connection-string>",
     "SENDER_EMAIL": "noreply@yourdomain.com",
     "FRONTEND_URL": "https://kkofflard.github.io",
-    "OTP_SECRET": "<random-secret-for-otp-signing>"
+    "OTP_SECRET": "<random-secret-for-otp-signing>",
+    "NOTIFICATION_URL": "https://<function-app>.azurewebsites.net/api/webhook/user-created",
+    "WEBHOOK_CLIENT_STATE": "<random-secret-for-webhook-validation>"
   }
 }

@@ -51,42 +51,51 @@ module.exports = async function (context, req) {
     const client = getGraphClient();
     const userId = tokenPayload.userId;
 
-    // Get the stored verification data from Entra
-    let extension;
+    // Get user data and verification extension from Entra
+    let user;
+    try {
+      user = await client
+        .api(`/users/${userId}`)
+        .select("id,birthday,mobilePhone")
+        .get();
+    } catch {
+      context.res = {
+        status: 404,
+        body: { error: "Gebruiker niet gevonden" },
+      };
+      return;
+    }
+
+    // Check if already verified via extension
     try {
       const extensions = await client
         .api(`/users/${userId}/extensions`)
         .get();
-      extension = extensions.value.find(
+      const extension = extensions.value.find(
         (e) => e.extensionName === "onboardingVerification"
       );
+      if (extension?.verificationComplete) {
+        context.res = {
+          status: 409,
+          body: { error: "Account is al geverifieerd" },
+        };
+        return;
+      }
     } catch {
+      // Extension not found is acceptable, continue with verification
+    }
+
+    if (!user.birthday || !user.mobilePhone) {
       context.res = {
         status: 404,
         body: { error: "Verificatiegegevens niet gevonden" },
-      };
-      return;
-    }
-
-    if (!extension) {
-      context.res = {
-        status: 404,
-        body: { error: "Verificatiegegevens niet gevonden" },
-      };
-      return;
-    }
-
-    if (extension.verificationComplete) {
-      context.res = {
-        status: 409,
-        body: { error: "Account is al geverifieerd" },
       };
       return;
     }
 
     // Normalize and compare birth date
     const inputBirthDate = new Date(birthDate).toISOString().split("T")[0];
-    const storedBirthDate = new Date(extension.birthDate)
+    const storedBirthDate = new Date(user.birthday)
       .toISOString()
       .split("T")[0];
 
@@ -101,7 +110,7 @@ module.exports = async function (context, req) {
     // Normalize and compare mobile phone
     const normalizePhone = (p) => p.replace(/[\s\-()]/g, "");
     const inputPhone = normalizePhone(mobilePhone);
-    const storedPhone = normalizePhone(extension.mobilePhone);
+    const storedPhone = normalizePhone(user.mobilePhone);
 
     // Compare last 8 digits to handle format differences
     if (inputPhone.slice(-8) !== storedPhone.slice(-8)) {
